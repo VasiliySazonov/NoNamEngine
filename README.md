@@ -4,7 +4,7 @@ Lightweight OpenGL 3D game engine with support of skeletal animations, dynamic P
 ### How to build?
 ---
 Clone this repository.
-You should have installed **glew**, **glfw**, **assimp** libraries, **g++** compiller and **make** build system.
+You should have installed **glew**, **glfw**, **assimp**, **glm** libraries, **g++** compiller and **make** build system.
 Then launch make from **engine** directory and it will build shared library in **bulid**.
 
 ### In which case should you use it?

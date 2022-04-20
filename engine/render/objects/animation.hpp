@@ -30,8 +30,8 @@ public:
 	Animation(std::string animationPath, Model *model, int index);
 	Bone *findBone(std::string &name);
 
-	inline float getTicksPerSecond() { return tps; }
-	inline float getDuration() { return duration; }
+	inline float getTicksPerSecond() const { return tps; }
+	inline float getDuration() const { return duration; }
 	inline _AssimpNode &getRootNode() { return rootNode; }
 	inline std::map<std::string, _Bone> &getBoneIDMap() { return BoneIDMap; }
 };

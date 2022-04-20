@@ -69,7 +69,7 @@ void Engine::handleEnt(Entity *ent, glm::mat4 globalTransform)
 
 void Engine::handleModel(EModel *model, glm::mat4 globalTransform)
 {
-	if (model->animator)
+	if (model->animator && model->animator->currentAnimation)
 	{
 		currentShader->uniform1i("animated", true);
 
@@ -101,8 +101,8 @@ void Engine::handleCollectionLOD(ECollectionLOD *collection)
 		EModel *model = (EModel*)collection->children[i];
 		model->enabled = false;
 
-		if (model->properties.LOD_distanceMin <= distance &&
-			model->properties.LOD_distanceMax >= distance)
+		if (model->LOD_properties.LOD_distanceMin <= distance &&
+			model->LOD_properties.LOD_distanceMax >= distance)
 		{
 			model->enabled = true;
 		}
@@ -111,11 +111,14 @@ void Engine::handleCollectionLOD(ECollectionLOD *collection)
 
 void Engine::handleModel_shadow(Entity *ent, glm::mat4 globalTransform)
 {
-	if (ent->type == ENT_MODEL && ent->enabled)
+	if (!ent->enabled)
+		return;
+
+	if (ent->type == ENT_MODEL)
 	{
 		currentShader->uniformMatrix4f("model", globalTransform * ent->transform->model);
 
-		if (((EModel*)(ent))->animator)
+		if (((EModel*)(ent))->animator && ((EModel*)(ent))->animator->currentAnimation)
 		{
 			auto transforms = ((EModel*)(ent))->animator->getFinalBoneMatrices();
 
@@ -229,7 +232,6 @@ void Engine::renderScene(EScene *scene)
 
 void Engine::use()
 {
-
 	shaderLighting->use();
 	currentShader = shaderLighting;
 
@@ -238,6 +240,9 @@ void Engine::use()
 	lastTime = glfwGetTime();
 
 	runEntSetupRecursive(currentScene);
+
+	if (currentScene->activeCamera && currentScene->activeCamera->script)
+		currentScene->activeCamera->script->Setup();
 
 	while(!Window::ShouldClose())
 	{
@@ -252,6 +257,9 @@ void Engine::use()
 
 		if (currentScene->activeCamera)
 		{
+			if (currentScene->activeCamera->script)
+				currentScene->activeCamera->script->Update(deltaTime);
+
 			currentScene->activeCamera->update();
 
 			currentShader->uniformMatrix4f("projection",

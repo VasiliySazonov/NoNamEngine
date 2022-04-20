@@ -7,7 +7,7 @@
 class Window
 {
 public:
-	static GLFWwindow* window;
+	static GLFWwindow *window;
 	static int width, height;
 	static int Initialize(int width, int heigh, std::string name);
 	static int ShouldClose();

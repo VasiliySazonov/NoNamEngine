@@ -91,7 +91,7 @@ namespace Logical
 			float LOD_distanceMax; // distance model disappears
 		};
 
-		LOD_properties properties;
+		LOD_properties LOD_properties;
 
 		Entity(std::string name) : name(name)
 		{
@@ -132,27 +132,28 @@ namespace Logical
 		Model *mdl;
 		Animator *animator;
 
-		EModel(std::string path) : Entity(path)
+		EModel(std::string name) : Entity(name)
 		{
-			mdl = new Model(path);
 			type = ENT_MODEL;
 
 			script = NULL;
-			animator = NULL;
+			animator = new Animator();
 		
-			properties = {
+			LOD_properties = {
 				.LOD_distanceMin = 0.0f,
 				.LOD_distanceMax = 100.0f
 			};
 		}
 
+
+
 		~EModel() override
 		{
-			delete mdl;
+			delete animator;
 		}
 	};
 
-	class ECollection : public Entity // It may be used in future
+	class ECollection : public Entity
 	{
 	public:
 		ECollection(std::string name) : Entity(name)
@@ -282,10 +283,8 @@ namespace Logical
 		{
 			float zNear;
 			float zFar;
-			float left;
-			float right;
-			float bottom;
-			float top;
+			float sizeX;
+			float sizeY;
 		};
 
 		
@@ -306,10 +305,8 @@ namespace Logical
 		{
 			float zNear;
 			float zFar;
-			float left;
-			float right;
-			float bottom;
-			float top;
+			float sizeX;
+			float sizeY;
 		};
 
 		ShadowCasterProperties properties;
@@ -322,10 +319,8 @@ namespace Logical
 			properties = {
 				1,
 				100,
-				-5,
-				5,
-				-5,
-				5
+				10,
+				10
 			};
 		}
 
@@ -350,10 +345,10 @@ namespace Logical
 		glm::mat4 getProjection()
 		{
 			return glm::ortho(
-				properties.left,
-				properties.right,
-				properties.bottom,
-				properties.top,
+				-properties.sizeY / 2,
+				properties.sizeY / 2,
+				-properties.sizeX / 2,
+				properties.sizeX / 2,
 				properties.zNear,
 				properties.zFar
 			);

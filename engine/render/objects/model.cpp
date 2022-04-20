@@ -1,9 +1,10 @@
 #include "model.hpp"
 
-Model::Model(std::string path)
+Model::Model(std::string path, std::string name)
 {
 	boneCounter = 0;
-	load(path);
+	mPath = path;
+	load(path + name);
 }
 
 Model::~Model()
@@ -14,11 +15,13 @@ Model::~Model()
 	}
 }
 
-void Model::load(std::string &path)
+void Model::load(std::string path)
 {
 	Assimp::Importer importer;
 	scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	
+	assert(scene);
+
 	processNode(scene->mRootNode);
 }
 
@@ -102,7 +105,7 @@ std::vector<Texture> Model::getMaterialTextures(aiMaterial *mat, aiTextureType t
 		unsigned char *buffer;
 		int width, height, bpp;
 
-		buffer = stbi_load(str.C_Str(), &width, &height, &bpp, 4);
+		buffer = stbi_load((mPath + std::string(str.C_Str())).c_str(), &width, &height, &bpp, 4);
 
 		glGenTextures(1, &texture.id);
 		glBindTexture(GL_TEXTURE_2D, texture.id);

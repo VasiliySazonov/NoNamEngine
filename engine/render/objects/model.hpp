@@ -21,11 +21,12 @@ class Model
 {
 private:
 	int boneCounter;
+	std::string mPath;
 
 	std::map<std::string, _Bone> _mBones;
 	const aiScene *scene;
 
-	void load(std::string &path);
+	void load(std::string path);
 	void processNode(aiNode *node);
 	Mesh *processMesh(aiMesh *mesh, aiNode *node);
 
@@ -39,7 +40,7 @@ private:
 public:
 	std::vector<Mesh*> meshes;
 
-	Model(std::string path);
+	Model(std::string path, std::string name);
 	~Model();
 
 	std::map<std::string, _Bone> &getBones() { return _mBones; }

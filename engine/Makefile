@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-g -fPIC
+CFLAGS=-fPIC
 LDFLAGS=-shared
 BUILD_DIR=../build/
 

@@ -9,14 +9,12 @@ out VS_OUT {
 	vec3 FragPos;
 	vec3 Normal;
 	vec2 UV;
-	vec4 FragPosLightSpace;
 } vs_out;
 
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform mat4 lightSpaceMatrix;
 
 uniform mat4 boneTransforms[100];
 
@@ -59,7 +57,6 @@ void main()
 	}
 
 	vs_out.FragPos = vec3(model * totalPosition);
-	vs_out.FragPosLightSpace = lightSpaceMatrix * model * totalPosition;
 	vs_out.Normal = mat3(transpose(inverse(model))) * localNormal;
 	vs_out.UV = vertexUV;
 

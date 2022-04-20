@@ -2,8 +2,8 @@
 #include "logic/base/base.hpp"
 #include "render/objects/animator.hpp"
 #include "render/utils/shader.hpp"
-#include "window/window.h"
-#include "window/events.h"
+#include "window/window.hpp"
+#include "window/events.hpp"
 
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/quaternion.hpp>

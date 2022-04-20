@@ -4,6 +4,8 @@ Animator::Animator()
 {
 	currentTime = 0;
 
+	currentAnimation = NULL;
+
 	for (int i = 0; i < 100; ++i)
 		finalBoneMatrices.push_back(glm::mat4(1.0));
 }
