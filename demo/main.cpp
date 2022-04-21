@@ -129,6 +129,10 @@ int main(int argc, const char **argv)
 
 	engine.use(); // launch the main loop
 
+	delete man.mdl;
+	delete model_LOD0.mdl;
+	delete model_LOD1.mdl;
+
 	return 0;
 }
 
