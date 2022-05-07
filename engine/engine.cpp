@@ -73,7 +73,7 @@ void Engine::handleModel(EModel *model, glm::mat4 globalTransform)
 	{
 		currentShader->uniform1i("animated", true);
 
-		model->animator->updateAnimation(deltaTime * 30);
+		model->animator->updateAnimation(deltaTime /* *30 Old assimp fix removed */);
 		auto transforms = model->animator->getFinalBoneMatrices();
 
 		for (int i = 0; i < transforms.size(); i++)
