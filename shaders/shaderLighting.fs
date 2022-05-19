@@ -59,40 +59,45 @@ float calculateShadow()
 	return shadow;
 }
 
-vec3 calculatePointLight(Light_point light, vec3 norm, vec3 viewDir)
+vec3 calculatePointLight(Light_point light, vec3 norm, vec3 viewDir, vec3 tex_diffuse)
 {
-	vec3 ambient = light.ambient * texture(texture_diffuse0, fs_in.UV).rgb;
+	vec3 ambient = light.ambient * tex_diffuse;
 
 	vec3 lightDir = normalize(light.position - fs_in.FragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff * texture(texture_diffuse0, fs_in.UV).rgb;
+	vec3 diffuse = light.diffuse * diff * tex_diffuse;
 
 	vec3 reflectDir = reflect(-lightDir, norm);  
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 2);
-	vec3 specular = light.specular * spec /* texture(texture_diffuse0, fs_in.UV).rgb*/;
+	vec3 specular = light.specular * spec;
 
-	float distance = distance(light.position, fs_in.FragPos);
-	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	if (light.constant != 0 &&
+		light.linear != 0 &&
+		light.quadratic != 0)
+	{
+		float distance = distance(light.position, fs_in.FragPos);
+		float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-	ambient *= attenuation; 
-	diffuse *= attenuation;
-	specular *= attenuation;
-
+		ambient *= attenuation; 
+		diffuse *= attenuation;
+		specular *= attenuation;
+	}
 
 	return vec3(diffuse + ambient + specular);
 }
 
 void main()
 {
-	vec3 result;
+	vec3 result = vec3(0);
 
 	vec3 norm = normalize(fs_in.Normal);
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+	vec3 tex = texture(texture_diffuse0, fs_in.UV).rgb;
 
-	for (int i = 0; i < 1; i++) // caculate point lights
+	for (int i = 0; i < 100; i++) // caculate point lights
 	{
 		//float shadow = calculateShadow(fs_in.FragPosLightSpace);
-		result += calculatePointLight(pointLights[i], norm, viewDir);
+		result += calculatePointLight(pointLights[i], norm, viewDir, tex);
 	}
 
 	//TODO: multiple shadow casters
