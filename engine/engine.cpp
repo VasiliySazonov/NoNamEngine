@@ -3,7 +3,11 @@
 Engine::Engine(const WindowProperties &window, const ShaderPaths &shaders)
 {
 	// all this stuff will be read from config file
-	Window::Initialize(window.width, window.height, window.name);
+	Window::Initialize( window.width,
+					    window.height, 
+						window.name, 
+						window.antiAliasingLevel
+	);
 	Events::initialize();
 
 	shaderLighting = new Shader(shaders.lightingVertex, shaders.lightingFragment);

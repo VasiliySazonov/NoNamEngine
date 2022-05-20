@@ -4,7 +4,7 @@ GLFWwindow *Window::window;
 int Window::height = 0;
 int Window::width = 0;
 
-int Window::Initialize(int width, int height, std::string name)
+int Window::Initialize(int width, int height, std::string name, unsigned int antiAliasingLevel)
 {
 	Window::width = width;
 	Window::height = height;
@@ -15,7 +15,7 @@ int Window::Initialize(int width, int height, std::string name)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-	//glfwWindowHint(GLFW_SAMPLES, 8);
+	glfwWindowHint(GLFW_SAMPLES, antiAliasingLevel);
 
 	glViewport(0, 0, Window::width, Window::height);
 

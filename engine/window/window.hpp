@@ -9,7 +9,7 @@ class Window
 public:
 	static GLFWwindow *window;
 	static int width, height;
-	static int Initialize(int width, int heigh, std::string name);
+	static int Initialize(int width, int heigh, std::string name, unsigned int antiAliasingLevel = 0);
 	static int ShouldClose();
 	static void SwapBuffers();
 	static void PollEvents();

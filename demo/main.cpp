@@ -14,7 +14,8 @@ ShaderPaths shaders = {
 WindowProperties window = {
 	.name = "Test",
 	.width = 1920,
-	.height = 1080
+	.height = 1080,
+	.antiAliasingLevel = 4 // GLFW anti aliasing level
 };
 
 class CloseWindow : public Logical::Script

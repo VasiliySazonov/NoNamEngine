@@ -25,6 +25,7 @@ struct WindowProperties
 	std::string name;
 	unsigned int width;
 	unsigned int height;
+	unsigned int antiAliasingLevel;
 };
 
 

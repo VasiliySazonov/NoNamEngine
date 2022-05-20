@@ -1,6 +1,6 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 BrightColor;
+//layout (location = 1) out vec4 BrightColor; // may be used for bloom 
 
 in VS_OUT {
 	vec3 FragPos;
@@ -30,7 +30,7 @@ struct Light_point
 	float quadratic;
 };
 
-uniform Light_point pointLights[100];
+uniform Light_point pointLights[32];
 
 float calculateShadow()
 {
@@ -94,9 +94,8 @@ void main()
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 	vec3 tex = texture(texture_diffuse0, fs_in.UV).rgb;
 
-	for (int i = 0; i < 100; i++) // caculate point lights
+	for (int i = 0; i < 32; i++) // caculate point lights
 	{
-		//float shadow = calculateShadow(fs_in.FragPosLightSpace);
 		result += calculatePointLight(pointLights[i], norm, viewDir, tex);
 	}
 

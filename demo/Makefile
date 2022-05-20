@@ -5,3 +5,6 @@ main: main.cpp
 
 run: demo
 	LD_LIBRARY_PATH=../build ./demo
+
+clean:
+	rm demo
