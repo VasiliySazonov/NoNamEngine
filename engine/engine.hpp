@@ -51,6 +51,8 @@ private:
 
 	inline void runEntUpdate(Entity *ent, double deltaTime);
 
+	void sendAnimationUniform(EModel *model);
+
 	void handleEnt(Entity *ent, glm::mat4 globalTransform);
 
 	void handleModel(EModel *ent, glm::mat4 globalTransform);

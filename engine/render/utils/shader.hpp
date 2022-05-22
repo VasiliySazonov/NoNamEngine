@@ -25,16 +25,23 @@ public:
 	void uniform2i(std::string name, int a, int b);
 	void uniform1i(std::string name, int a);
 
-	void uniformMatrix4f(std::string name, glm::mat4 mat);
-	void uniformMatrix3f(std::string name, glm::mat3 mat);
-	void uniformMatrix2f(std::string name, glm::mat2 mat);
+	void uniformMatrix4(std::string name, glm::mat4 mat);
+	void uniformMatrix3(std::string name, glm::mat3 mat);
+	void uniformMatrix2(std::string name, glm::mat2 mat);
 
-	void uniformVector4(std::string name, glm::vec4 &vec);
-	void uniformVector3(std::string name, glm::vec3 &vec);
-	void uniformVector2(std::string name, glm::vec2 &vec);
+	void uniformVector4(std::string name, glm::vec4 vec);
+	void uniformVector3(std::string name, glm::vec3 vec);
+	void uniformVector2(std::string name, glm::vec2 vec);
+
+	void uniformArrayMatrix4(std::string name, unsigned int index, glm::mat4 mat);
+	void uniformArrayMatrix3(std::string name, unsigned int index, glm::mat3 mat);
+	void uniformArrayMatrix2(std::string name, unsigned int index, glm::mat2 mat);
+
+	void uniformArrayVector4(std::string name, unsigned int index, glm::vec4 vec);
+	void uniformArrayVector3(std::string name, unsigned int index, glm::vec3 vec);
+	void uniformArrayVector2(std::string name, unsigned int index, glm::vec2 vec);
 
 	void use();
 
 	inline unsigned int getId() const { return this->id;}
 };
-

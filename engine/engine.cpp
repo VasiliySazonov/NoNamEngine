@@ -44,24 +44,27 @@ inline void Engine::runEntUpdate(Entity *ent, double deltaTime)
 
 void Engine::handleEnt(Entity *ent, glm::mat4 globalTransform)
 {
-	runEntUpdate(ent, deltaTime);
+	if (!ent->enabled)
+		return;
+
+	runEntUpdate(ent, deltaTime); // update script
 	ent->transform->update();
 
-	if (ent->enabled)
+	switch (ent->type)
 	{
-		if (!ent->enabled)
-			return;
-
-		if (ent->type == ENT_MODEL)
+		case ENT_MODEL:
 			handleModel((EModel*) ent, globalTransform);
+			break;
 
-		else if (ent->type == ENT_LIGHT)
+		case ENT_LIGHT:
 			handleLight_point((ELight_point*) ent, globalTransform);
+			break;
 
-		else if (ent->type == ENT_SHADOW_ORTHO)
+		case ENT_SHADOW_ORTHO:
 			handleShadow_direct_ortho((EShadowCasterDirectOrtho*) ent);
+			break;
 
-		else if (ent->type == ENT_COLLECTION_LOD)
+		case ENT_COLLECTION_LOD:
 			handleCollectionLOD((ECollectionLOD*)ent);
 	}
 
@@ -71,24 +74,33 @@ void Engine::handleEnt(Entity *ent, glm::mat4 globalTransform)
 	}
 }
 
-void Engine::handleModel(EModel *model, glm::mat4 globalTransform)
+void Engine::sendAnimationUniform(EModel *model)
 {
-	if (model->animator && model->animator->currentAnimation)
+	if (model->animator->currentAnimation) // check if the model has an animation
 	{
+		// explicitly point that this model should be animated
 		currentShader->uniform1i("animated", true);
-
-		model->animator->updateAnimation(deltaTime /* *30 Old assimp fix removed */);
-		auto transforms = model->animator->getFinalBoneMatrices();
-
+		// get model space transform matrices
+		std::vector<glm::mat4> transforms = model->animator->getFinalBoneMatrices();
+		// push unifroms to the shader
 		for (int i = 0; i < transforms.size(); i++)
-			currentShader->uniformMatrix4f("boneTransforms[" + std::to_string(i) + "]", transforms[i]);
+			currentShader->uniformArrayMatrix4("boneTransforms", i, transforms[i]);
 	}
-	else
+	else 
 	{
+		// explicitly point that model should not be animated
 		currentShader->uniform1i("animated", false);
 	}
+}
 
-	currentShader->uniformMatrix4f("model", globalTransform * model->transform->model);
+void Engine::handleModel(EModel *model, glm::mat4 globalTransform)
+{
+	// update animator
+	if (model->animator->currentAnimation) // check if the model has an animation
+		model->animator->updateAnimation(deltaTime);
+	
+	sendAnimationUniform(model);
+	currentShader->uniformMatrix4("model", globalTransform * model->transform->model);
 	model->mdl->render(currentShader);
 }
 
@@ -113,6 +125,7 @@ void Engine::handleCollectionLOD(ECollectionLOD *collection)
 	}
 }
 
+// this is really bad
 void Engine::handleModel_shadow(Entity *ent, glm::mat4 globalTransform)
 {
 	if (!ent->enabled)
@@ -120,22 +133,8 @@ void Engine::handleModel_shadow(Entity *ent, glm::mat4 globalTransform)
 
 	if (ent->type == ENT_MODEL)
 	{
-		currentShader->uniformMatrix4f("model", globalTransform * ent->transform->model);
-
-		if (((EModel*)(ent))->animator && ((EModel*)(ent))->animator->currentAnimation)
-		{
-			auto transforms = ((EModel*)(ent))->animator->getFinalBoneMatrices();
-
-			currentShader->uniform1i("animated", true);
-
-			for (int i = 0; i < transforms.size(); i++)
-				currentShader->uniformMatrix4f("boneTransforms[" + std::to_string(i) + "]", transforms[i]);
-		}
-		else
-		{
-			currentShader->uniform1i("animated", false);
-		}
-
+		currentShader->uniformMatrix4("model", globalTransform * ent->transform->model);
+		sendAnimationUniform((EModel*)ent);
 		((EModel*)(ent))->mdl->render(currentShader);
 	}
 
@@ -206,15 +205,13 @@ void Engine::handleShadow_direct_ortho(EShadowCasterDirectOrtho *shadow)
 
 	shadow->update();
 
-	currentShader->uniformMatrix4f("projection",
+	currentShader->uniformMatrix4("projection",
 		shadow->getProjection());
 	
-	currentShader->uniformMatrix4f("view",
+	currentShader->uniformMatrix4("view",
 		shadow->getView());
 
-	glDisable(GL_CULL_FACE);
 	handleModel_shadow(currentScene, glm::mat4(1.0f));
-	glEnable(GL_CULL_FACE);
 
 	shadow->unbind();
 	glViewport(0, 0, Window::width, Window::height);
@@ -226,7 +223,7 @@ void Engine::handleShadow_direct_ortho(EShadowCasterDirectOrtho *shadow)
 	shadow->bindTexture(/*shadowCounter_direct_ortho++*/ 2);
 	currentShader->uniform1i("shadowMap" /* + std::to_string(shadowCounter_direct_ortho)*/, 2);
 
-	currentShader->uniformMatrix4f("lightSpaceMatrix", shadow->getProjection() * shadow->getView());
+	currentShader->uniformMatrix4("lightSpaceMatrix", shadow->getProjection() * shadow->getView());
 }
 
 void Engine::renderScene(EScene *scene)
@@ -266,10 +263,10 @@ void Engine::use()
 
 			currentScene->activeCamera->update();
 
-			currentShader->uniformMatrix4f("projection",
+			currentShader->uniformMatrix4("projection",
 				currentScene->activeCamera->getProjection((float)Window::width / (float)Window::height));
 			
-			currentShader->uniformMatrix4f("view",
+			currentShader->uniformMatrix4("view",
 				currentScene->activeCamera->getView());
 
 			currentShader->uniformVector3("viewPos",
@@ -286,10 +283,10 @@ void Engine::use()
 			skyboxShader->use();
 			currentShader = skyboxShader;
 
-			currentShader->uniformMatrix4f("projection",
+			currentShader->uniformMatrix4("projection",
 				currentScene->activeCamera->getProjection((float)Window::width / (float)Window::height));
 			
-			currentShader->uniformMatrix4f("view",
+			currentShader->uniformMatrix4("view",
 				glm::mat4(glm::mat3(currentScene->activeCamera->getView())));
 
 			currentScene->skybox->render(currentShader);

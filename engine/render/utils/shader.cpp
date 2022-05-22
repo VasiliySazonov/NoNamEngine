@@ -131,19 +131,19 @@ void Shader::uniform1i(std::string name, int a)
 
 
 
-void Shader::uniformMatrix4f(std::string name, glm::mat4 mat)
+void Shader::uniformMatrix4(std::string name, glm::mat4 mat)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniformMatrix4fv(u_loc, 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::uniformMatrix3f(std::string name, glm::mat3 mat)
+void Shader::uniformMatrix3(std::string name, glm::mat3 mat)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniformMatrix4fv(u_loc, 1, GL_FALSE,&mat[0][0]);
 }
 
-void Shader::uniformMatrix2f(std::string name, glm::mat2 mat)
+void Shader::uniformMatrix2(std::string name, glm::mat2 mat)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniformMatrix4fv(u_loc, 1, GL_FALSE, &mat[0][0]);
@@ -151,20 +151,54 @@ void Shader::uniformMatrix2f(std::string name, glm::mat2 mat)
 
 
 
-void Shader::uniformVector4(std::string name, glm::vec4 &vec)
+void Shader::uniformVector4(std::string name, glm::vec4 vec)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniform4f(u_loc, vec.x, vec.y, vec.z, vec.w);
 }
 
-void Shader::uniformVector3(std::string name, glm::vec3 &vec)
+void Shader::uniformVector3(std::string name, glm::vec3 vec)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniform3f(u_loc, vec.x, vec.y, vec.z);
 }
 
-void Shader::uniformVector2(std::string name, glm::vec2 &vec)
+void Shader::uniformVector2(std::string name, glm::vec2 vec)
 {
 	unsigned int u_loc = glGetUniformLocation(this->id, name.c_str());
 	glUniform2f(u_loc, vec.x, vec.y);
+}
+
+
+
+void Shader::uniformArrayMatrix4(std::string name, unsigned int index, glm::mat4 mat)
+{
+	uniformMatrix4(name + "[" + std::to_string(index) + "]", mat);
+}
+
+void Shader::uniformArrayMatrix3(std::string name, unsigned int index, glm::mat3 mat)
+{
+	uniformMatrix3(name + "[" + std::to_string(index) + "]", mat);
+}
+
+void Shader::uniformArrayMatrix2(std::string name, unsigned int index, glm::mat2 mat)
+{
+	uniformMatrix2(name + "[" + std::to_string(index) + "]", mat);
+}
+
+
+
+void Shader::uniformArrayVector4(std::string name, unsigned int index, glm::vec4 vec)
+{
+	uniformVector4(name + "[" + std::to_string(index) + "]", vec);
+}
+
+void Shader::uniformArrayVector3(std::string name, unsigned int index, glm::vec3 vec)
+{
+	uniformVector3(name + "[" + std::to_string(index) + "]", vec);
+}
+
+void Shader::uniformArrayVector2(std::string name, unsigned int index, glm::vec2 vec)
+{
+	uniformVector2(name + "[" + std::to_string(index) + "]", vec);
 }

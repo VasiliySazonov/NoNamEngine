@@ -85,13 +85,13 @@ namespace Logical
 		
 		Transform *transform;
 
-		struct LOD_properties
+		struct LODproperties
 		{
 			float LOD_distanceMin; // distance model appears
 			float LOD_distanceMax; // distance model disappears
 		};
 
-		LOD_properties LOD_properties;
+		LODproperties LOD_properties;
 
 		Entity(std::string name) : name(name)
 		{
@@ -128,6 +128,9 @@ namespace Logical
 
 	class EModel : public Entity
 	{
+	private:
+		bool castShadow;
+
 	public:
 		Model *mdl;
 		Animator *animator;
@@ -137,6 +140,7 @@ namespace Logical
 			type = ENT_MODEL;
 
 			script = NULL;
+			castShadow = true;
 			animator = new Animator();
 		
 			LOD_properties = {
@@ -144,7 +148,6 @@ namespace Logical
 				.LOD_distanceMax = 100.0f
 			};
 		}
-
 
 
 		~EModel() override
